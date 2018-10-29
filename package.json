@@ -1,0 +1,40 @@
+{
+  "name": "sloiki-damian",
+  "version": "1.0.0",
+  "description": "Tasks",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "build": "npx babel src -d build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krolikowskidamian/sloiki.git"
+  },
+  "keywords": [
+    "Redux",
+    "JavaScript"
+  ],
+  "author": "Damian Krolikowski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/krolikowskidamian/sloiki/issues"
+  },
+  "homepage": "https://github.com/krolikowskidamian/sloiki#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babelify": "^10.0.0",
+    "jest": "^23.6.0",
+    "jest-cli": "^23.6.0"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0",
+    "redux": "^4.0.1"
+  }
+}
