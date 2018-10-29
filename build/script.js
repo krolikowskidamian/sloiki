@@ -20,14 +20,15 @@ const {
 
 class JarContainer extends Component {
   render() {
-    return React.createElement("div", null, React.createElement("p", null, "Current Amount: ", React.createElement("b", null, this.props.amount)), React.createElement("button", {
-      onClick: this.props.amount = +100
+    let propertiess = this.props;
+    return React.createElement("div", null, React.createElement("p", null, "Current Amount: ", React.createElement("b", null, this.props.amount, " ID: ", this.props.element.id, " ", this.props.index)), React.createElement("button", {
+      onClick: this.props.onAdd.bind(this, 123, this.props.index)
     }, "Increament"));
   }
 
 }
 
-let uniqueJarsId = 0;
+let uniqueJarsId = 10;
 
 class SloikApp extends Component {
   constructor(props) {
@@ -35,16 +36,25 @@ class SloikApp extends Component {
     this.state = {
       jars: [{
         id: uniqueJarsId++,
-        currentAmount: 0
+        currentAmount: 20
       }]
     };
   }
 
+  addFn(amount, index) {
+    const currentState = this.state;
+    currentState.jars[index].currentAmount = +amount;
+    this.setState = currentState;
+  }
+
   render() {
-    return React.createElement("div", null, React.createElement("p", null, "List of Jar's"), React.createElement("ul", null, this.state.jars.map(e => React.createElement("li", {
-      key: e.id
+    return React.createElement("div", null, React.createElement("p", null, "List of Jar's"), React.createElement("ul", null, this.state.jars.map((e, index) => React.createElement("li", {
+      key: index
     }, React.createElement(JarContainer, {
-      amount: e.currentAmount
+      onAdd: this.addFn.bind(this),
+      amount: e.currentAmount,
+      element: e,
+      index: index
     })))));
   }
 
