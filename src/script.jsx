@@ -27,30 +27,31 @@ console.log('Application START')
 const { Component } = React;
 
 class JarContainer extends Component {
+
   render(){
+    let propertiess = this.props;
     return(
     <div>
-      <p>Current Amount: <b>{this.props.amount}</b></p>
-      <button onClick={this.props.amount =+ 100}>Increament</button>
+      <p>Current Amount: <b>{this.props.amount} ID: {this.props.element.id} {this.props.index}</b></p>
+      <button onClick={this.props.onAdd.bind(this, 123, this.props.index)} >Increament</button>
     </div>
     )
   }
 }
-
-let uniqueJarsId = 0;
+let uniqueJarsId=10;
 class SloikApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
       jars : [{
         id: uniqueJarsId++,
-        currentAmount: 0
+        currentAmount: 20
         }]
     }
   }
   addFn(amount, index) {
     const currentState = this.state;
-    currentState.jars[index] =+ amount;
+    currentState.jars[index].currentAmount =+ amount;
     this.setState = currentState;
   }
   render() {
@@ -58,7 +59,7 @@ class SloikApp extends Component {
       <div>
         <p>List of Jar's</p>
         <ul>
-          {this.state.jars.map((e, index) => <li key={index}><JarContainer onAdd={addFn} amount={e.currentAmount} /></li>)}
+          {this.state.jars.map((e, index) => <li key={index}><JarContainer onAdd={this.addFn.bind(this)} amount={e.currentAmount} element={e} index={index} /></li>)}
         </ul>
       </div>
     )
