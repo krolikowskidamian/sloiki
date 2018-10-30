@@ -120,14 +120,18 @@ class JarContainer extends Component {
       <div>
         <pre>{JSON.stringify(this.state)}</pre>
         <pre>{JSON.stringify(this.props)}</pre>
+        <pre>{JSON.stringify(this.props.element.jars)}</pre>
         <p>Current Amount: <b>{this.props.element.e.currentAmount}</b> | Id of Jar: {this.props.element.index} </p>
         <input type="number" onChange={(a) => { this.setState({ amount: a.target.value }) }} value={this.state.amount} />
         <button onClick={() => { this.historyAppend(this.props.fnHandlers.onAdd(this.state.amount, this.props.element.index)); this.setState({ amount: '' }) }} >Increament</button>
         <button onClick={() => { this.historyAppend(this.props.fnHandlers.onRemove(this.state.amount, this.props.element.index)); this.setState({ amount: '' }) }} >Decreament</button>
-        <div>
-
+        <select>
+         {this.props.element.jars.map( (el, i) => {
+           return <option selected={i == this.props.element.index ? 'selected' : ''} value={i}>Jar No: {i} (Current state: {el.currentAmount})</option>
+         } )}
+        </select>
           <JarHistory history={this.state.history} />
-        </div>
+        
       </div>
 
     )

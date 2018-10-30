@@ -126,7 +126,7 @@ class JarContainer extends Component {
   }
 
   render() {
-    return React.createElement("div", null, React.createElement("pre", null, JSON.stringify(this.state)), React.createElement("pre", null, JSON.stringify(this.props)), React.createElement("p", null, "Current Amount: ", React.createElement("b", null, this.props.element.e.currentAmount), " | Id of Jar: ", this.props.element.index, " "), React.createElement("input", {
+    return React.createElement("div", null, React.createElement("pre", null, JSON.stringify(this.state)), React.createElement("pre", null, JSON.stringify(this.props)), React.createElement("pre", null, JSON.stringify(this.props.element.jars)), React.createElement("p", null, "Current Amount: ", React.createElement("b", null, this.props.element.e.currentAmount), " | Id of Jar: ", this.props.element.index, " "), React.createElement("input", {
       type: "number",
       onChange: a => {
         this.setState({
@@ -148,9 +148,14 @@ class JarContainer extends Component {
           amount: ''
         });
       }
-    }, "Decreament"), React.createElement("div", null, React.createElement(JarHistory, {
+    }, "Decreament"), React.createElement("select", null, this.props.element.jars.map((el, i) => {
+      return React.createElement("option", {
+        selected: i == this.props.element.index ? 'selected' : '',
+        value: i
+      }, "Jar No: ", i, " (Current state: ", el.currentAmount, ")");
+    })), React.createElement(JarHistory, {
       history: this.state.history
-    })));
+    }));
   }
 
 }
