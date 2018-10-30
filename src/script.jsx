@@ -26,40 +26,103 @@
 console.log('Application START')
 const { Component } = React;
 
-class JarContainer extends Component {
+const tdStyle = {
+  textAlign: 'center'
+}
 
-  render(){
+class jarHistory extends Component {
+  render() {
+    let preparedData;
+    return (
+      <div>
+        <p>History</p>
+        <table width="100%">
+          <tr>
+            <th>Method</th>
+            <th>Timestamp</th>
+            <th>Amount</th>
+          </tr>
+          {this.props.history.map((element, index) => <tr key={index}>
+            <td style={tdStyle} ><b>{element.method}</b></td>
+            <td style={tdStyle} >{element.timestamp.toLocaleDateString()} : {element.timestamp.toLocaleTimeString()}</td>
+            <td style={tdStyle} ><b>{element.modifier}</b></td> </tr>)}
+
+        </table>
+      </div>
+    )
+
+  }
+}
+
+class JarContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { amount: '', history: [], historySort: { field: 'timestamp', sort: 'DESC' } };
+
+  }
+  historyAppend(element) {
+    let newHistory = [...this.state.history, element];
+    this.setState({ history: newHistory });
+  }
+  changeSorting(fieldName, sortWay) {
+    this.setState({ historySort: { field: fieldName, sort: sortWay } });
+  }
+  render() {
     let propertiess = this.props;
-    return(
-    <div>
-      <p>Current Amount: <b>{this.props.amount} ID: {this.props.element.id} {this.props.index}</b></p>
-      <button onClick={this.props.onAdd.bind(this, 123, this.props.index)} >Increament</button>
-    </div>
+    return (
+      <div>
+        <pre>{JSON.stringify(this.state)}</pre>
+        <pre>{JSON.stringify(this.props)}</pre>
+        <p>Current Amount: <b>{this.props.element.e.currentAmount} ID: {this.props.element.e.id} </b></p>
+        <input type="number" onChange={(a) => { this.setState({ amount: a.target.value }) }} value={this.state.amount} />
+        <button onClick={() => { this.historyAppend(this.props.fnHandlers.onAdd(this.state.amount, this.props.element.index)); this.setState({ amount: '' }) }} >Increament</button>
+        <button onClick={() => { this.historyAppend(this.props.fnHandlers.onRemove(this.state.amount, this.props.element.index)); this.setState({ amount: '' }) }} >Decreament</button>
+        <div>
+
+
+        </div>
+      </div>
+
     )
   }
 }
-let uniqueJarsId=10;
+let uniqueJarsId = 10;
 class SloikApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      jars : [{
+      jars: [{
         id: uniqueJarsId++,
         currentAmount: 20
-        }]
+      }]
     }
   }
   addFn(amount, index) {
     const currentState = this.state;
-    currentState.jars[index].currentAmount =+ amount;
-    this.setState = currentState;
+    currentState.jars[index].currentAmount = parseInt(currentState.jars[index].currentAmount, 10) + parseInt(amount, 10);
+    this.setState(currentState);
+    return { timestamp: new Date(), modifier: amount, currentState: currentState.jars[index].currentAmount, method: "Increased" }
+  }
+  onRemove(amount, index) {
+    const currentState = this.state;
+    if (parseInt(currentState.jars[index].currentAmount, 10) < parseInt(amount, 10)) {
+      currentState.jars[index].currentAmount = 0;
+    } else {
+      currentState.jars[index].currentAmount = parseInt(currentState.jars[index].currentAmount, 10) - parseInt(amount, 10);
+    }
+    this.setState(currentState);
+    return { timestamp: new Date(), modifier: amount, currentState: currentState.jars[index].currentAmount, method: "Decreased" }
   }
   render() {
     return (
       <div>
         <p>List of Jar's</p>
+        <pre>{JSON.stringify(this.state)}</pre>
         <ul>
-          {this.state.jars.map((e, index) => <li key={index}><JarContainer onAdd={this.addFn.bind(this)} amount={e.currentAmount} element={e} index={index} /></li>)}
+          {this.state.jars.map((e, index) =>
+            <li key={index}>
+              <JarContainer fnHandlers={{ onAdd: this.addFn.bind(this), onRemove: this.onRemove.bind(this) }} element={{ e, index }} />
+            </li>)}
         </ul>
       </div>
     )
