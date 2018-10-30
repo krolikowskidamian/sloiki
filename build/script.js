@@ -17,44 +17,226 @@ console.log('Application START');
 const {
   Component
 } = React;
+const tdStyle = {
+  textAlign: 'center'
+};
+const thStyle = {
+  cursor: 'pointer',
+  borderBottom: '1px solid'
+};
 
-class JarContainer extends Component {
+class JarHistory extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      sortField: 'timestamp',
+      sortWay: 'DESC'
+    };
+  }
+
+  changeSorting(sortField) {
+    let sortWay = this.state.sortWay === 'DESC' ? 'ASC' : 'DESC';
+    this.setState({
+      sortField,
+      sortWay
+    });
+  }
+
   render() {
-    let propertiess = this.props;
-    return React.createElement("div", null, React.createElement("p", null, "Current Amount: ", React.createElement("b", null, this.props.amount, " ID: ", this.props.element.id, " ", this.props.index)), React.createElement("button", {
-      onClick: this.props.onAdd.bind(this, 123, this.props.index)
-    }, "Increament"));
+    let preparedData = this.props.history.sort((a, b) => {
+      const fieldToParse = ['modifier'];
+      const fieldName = this.state.sortField;
+      const sortWay = this.state.sortWay;
+      let aComparer = a[fieldName];
+      let bComparer = b[fieldName];
+
+      if (fieldToParse.includes(fieldName)) {
+        aComparer = parseInt(aComparer);
+        bComparer = parseInt(bComparer);
+      }
+
+      if (aComparer > bComparer) {
+        return sortWay === 'DESC' ? -1 : 1;
+      }
+
+      if (aComparer < bComparer) {
+        return sortWay === 'DESC' ? 1 : -1;
+      }
+
+      if (aComparer == bComparer) {
+        return 0;
+      }
+    });
+    return React.createElement("div", null, React.createElement("h3", null, "History"), React.createElement("table", {
+      width: "100%"
+    }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", {
+      style: thStyle,
+      onClick: this.changeSorting.bind(this, 'method')
+    }, "Method ", this.state.sortField === 'method' ? this.state.sortWay === 'DESC' ? '/\\' : '\\/' : ''), React.createElement("th", {
+      style: thStyle,
+      onClick: this.changeSorting.bind(this, 'timestamp')
+    }, "Timestamp ", this.state.sortField === 'timestamp' ? this.state.sortWay === 'DESC' ? '/\\' : '\\/' : ''), React.createElement("th", {
+      style: thStyle,
+      onClick: this.changeSorting.bind(this, 'modifier')
+    }, "Amount ", this.state.sortField === 'modifier' ? this.state.sortWay === 'DESC' ? '/\\' : '\\/' : ''))), React.createElement("tbody", null, preparedData.map((element, index) => React.createElement("tr", {
+      key: index
+    }, React.createElement("td", {
+      style: tdStyle
+    }, element.method), React.createElement("td", {
+      style: tdStyle
+    }, element.timestamp.toLocaleDateString(), " : ", element.timestamp.toLocaleTimeString()), React.createElement("td", {
+      style: tdStyle
+    }, React.createElement("b", null, element.modifier)))))));
   }
 
 }
 
-let uniqueJarsId = 10;
+class JarContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      amount: '',
+      history: [],
+      historySort: {
+        field: 'timestamp',
+        sort: 'DESC'
+      }
+    };
+  }
+
+  historyAppend(element) {
+    if (!element) {
+      alert('Please insert valid number!');
+      return false;
+    }
+
+    let newHistory = [...this.state.history, element];
+    this.setState({
+      history: newHistory
+    });
+  }
+
+  changeSorting(fieldName, sortWay) {
+    this.setState({
+      historySort: {
+        field: fieldName,
+        sort: sortWay
+      }
+    });
+  }
+
+  render() {
+    return React.createElement("div", null, React.createElement("pre", null, JSON.stringify(this.state)), React.createElement("pre", null, JSON.stringify(this.props)), React.createElement("p", null, "Current Amount: ", React.createElement("b", null, this.props.element.e.currentAmount), " | Id of Jar: ", this.props.element.index, " "), React.createElement("input", {
+      type: "number",
+      onChange: a => {
+        this.setState({
+          amount: a.target.value
+        });
+      },
+      value: this.state.amount
+    }), React.createElement("button", {
+      onClick: () => {
+        this.historyAppend(this.props.fnHandlers.onAdd(this.state.amount, this.props.element.index));
+        this.setState({
+          amount: ''
+        });
+      }
+    }, "Increament"), React.createElement("button", {
+      onClick: () => {
+        this.historyAppend(this.props.fnHandlers.onRemove(this.state.amount, this.props.element.index));
+        this.setState({
+          amount: ''
+        });
+      }
+    }, "Decreament"), React.createElement("div", null, React.createElement(JarHistory, {
+      history: this.state.history
+    })));
+  }
+
+}
 
 class SloikApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
       jars: [{
-        id: uniqueJarsId++,
-        currentAmount: 20
+        currentAmount: 0
       }]
     };
   }
 
   addFn(amount, index) {
     const currentState = this.state;
-    currentState.jars[index].currentAmount = +amount;
-    this.setState = currentState;
+
+    if (isNaN(parseInt(amount))) {
+      return false;
+    }
+
+    currentState.jars[index].currentAmount = parseInt(currentState.jars[index].currentAmount, 10) + parseInt(amount, 10);
+    this.setState(currentState);
+    return {
+      timestamp: new Date(),
+      modifier: amount,
+      currentState: currentState.jars[index].currentAmount,
+      method: "Increased"
+    };
+  }
+
+  onRemove(amount, index) {
+    const currentState = this.state;
+
+    if (isNaN(parseInt(amount))) {
+      return false;
+    }
+
+    if (parseInt(currentState.jars[index].currentAmount, 10) < parseInt(amount, 10)) {
+      currentState.jars[index].currentAmount = 0;
+    } else {
+      currentState.jars[index].currentAmount = parseInt(currentState.jars[index].currentAmount, 10) - parseInt(amount, 10);
+    }
+
+    this.setState(currentState);
+    return {
+      timestamp: new Date(),
+      modifier: amount,
+      currentState: currentState.jars[index].currentAmount,
+      method: "Decreased"
+    };
+  }
+
+  addJar() {
+    let currentJars = this.state.jars.concat({
+      currentAmount: 0
+    });
+    this.setState({
+      jars: currentJars
+    });
+  }
+
+  removeJar() {
+    let currentJars = this.state.jars.slice(0, -1);
+    this.setState({
+      jars: currentJars
+    });
   }
 
   render() {
-    return React.createElement("div", null, React.createElement("p", null, "List of Jar's"), React.createElement("ul", null, this.state.jars.map((e, index) => React.createElement("li", {
+    return React.createElement("div", null, React.createElement("p", null, "List of Jar's"), React.createElement("pre", null, JSON.stringify(this.state)), React.createElement("button", {
+      onClick: this.addJar.bind(this)
+    }, "+"), React.createElement("button", {
+      onClick: this.removeJar.bind(this)
+    }, "-"), React.createElement("ul", null, this.state.jars.map((e, index) => React.createElement("li", {
       key: index
     }, React.createElement(JarContainer, {
-      onAdd: this.addFn.bind(this),
-      amount: e.currentAmount,
-      element: e,
-      index: index
+      fnHandlers: {
+        onAdd: this.addFn.bind(this),
+        onRemove: this.onRemove.bind(this)
+      },
+      element: {
+        e,
+        index,
+        jars: this.state.jars
+      }
     })))));
   }
 
