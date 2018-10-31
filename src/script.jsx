@@ -287,7 +287,6 @@ class SloikApp extends Component {
     currentState.jars[index].currentAmount = parseFloat(currentState.jars[index].currentAmount, 10) + parseFloat(amount, 10);
     currentState.globalHistory = [...this.state.globalHistory, { method: 'Deposit', jarId: index, amount: amount, timestamp: new Date() }]
     this.setState(currentState);
-    debugger;
     this.addJarHistory({ timestamp: new Date(), modifier: amount, currency: currencyName, currentState: currentState.jars[index].currentAmount, method: "Deposit", jarId: index }, index)
     return { timestamp: new Date(), modifier: amount, currentState: currentState.jars[index].currentAmount, method: "Deposit", jarId: index }
   }
@@ -403,3 +402,16 @@ const render = () => {
 };
 
 render();
+
+
+// if (module != undefined && module.exports) {
+//   module.exports = {
+//     currencyList,
+//     currencyConverter,
+//     GlobalDeposit,
+//     JarGlobalHistory,
+//     JarHistory,
+//     JarContainer,
+//     SloikApp
+//   }
+// }

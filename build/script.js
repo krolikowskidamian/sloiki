@@ -384,7 +384,6 @@ class SloikApp extends Component {
       timestamp: new Date()
     }];
     this.setState(currentState);
-    debugger;
     this.addJarHistory({
       timestamp: new Date(),
       modifier: amount,
@@ -588,4 +587,14 @@ const render = () => {
   ReactDOM.render(React.createElement(SloikApp, null), document.getElementById('root'));
 };
 
-render();
+render(); // if (module != undefined && module.exports) {
+//   module.exports = {
+//     currencyList,
+//     currencyConverter,
+//     GlobalDeposit,
+//     JarGlobalHistory,
+//     JarHistory,
+//     JarContainer,
+//     SloikApp
+//   }
+// }
