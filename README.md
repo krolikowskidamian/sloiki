@@ -10,6 +10,7 @@ Plunker Online Preview
 
 ## Getting started 🚀
 - `npm install`
+- `npm run start` 
 
 ## Authors 😎
 
